@@ -1,4 +1,5 @@
 import tkinter as tk
+from tkinter import messagebox
 import time
 import threading
 
@@ -14,13 +15,21 @@ class GameLogic:
         self.baseOreGain = 1
 
         self.product1 = 0
+        self.product1Requirement = 2
         self.baseMakeSpeed = 5
         self.baseProductGain = 1
         self.productValue = 5
+        
+    
+    def validate(self,current,required):
+        if current >= required:
+            return True
+        else:
+            return False
 
     def updateGUi(self):
         self.gui.oreLabel.config(text = f'Ores: {self.ores}')
-        self.gui.makeLabel.config(text = f'')
+        self.gui.productLabel.config(text = f'Product Made: {self.product1}')
 
     def start_timer(self, timer,label):
         for i in range(timer, -1, -1):
@@ -34,26 +43,33 @@ class GameLogic:
             self.start_timer(speed,label)
             btn.config(state="normal")
             label.config(text=f'Wait {speed}')
-            self.updateGUi()
         threading.Thread(target=run).start()
 
     def mine_ores(self):
         btn = self.gui.mineButton
         label = self.gui.mineWait
         speed = self.baseMiningSpeed
-        self.ores += self.baseOreGain
         self.start(btn,speed,label)
+        self.ores += self.baseOreGain
+        self.updateGUi()
 
     def make_product(self):
-        btn = self.gui.makeButton
-        label = self.gui.makeWait
-        speed = self.baseMakeSpeed
-        self.product1 += self.baseProductGain
+        okay = self.validate(self.ores, self.product1Requirement)
+        missing = self.product1Requirement - self.ores
+        if okay == True:
+            btn = self.gui.makeButton
+            speed = self.baseMakeSpeed
+            label = self.gui.makeWait
+            self.start(btn,speed,label)
+            self.ores -= self.product1Requirement
+            self.product1 += self.baseProductGain
+            self.updateGUi()
+        else:
+            messagebox.showerror("Insufficient Ores", f"You need {missing} more ores")
+        
+
 
         
-        
-
-    
 class GameGUI:
     def __init__(self, root):
         self.root = root
@@ -151,6 +167,7 @@ if __name__ == "__main__":
     controller = GuiController(gui, logic)
 
     gui.mineButton.config(command=controller.handleMining) 
+    gui.makeButton.config(command=controller.handleProduct)
 
     root.mainloop()
 
