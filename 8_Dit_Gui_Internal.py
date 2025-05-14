@@ -10,23 +10,23 @@ import threading
 
 
 class GameLogic:
-
-    """Handles the Idle Game's logic including upgrades and buttons."""
+    """Handle the Idle Game's logic including upgrades and buttons."""
 
     def __init__(self, gui, root):
-        
-        """Tnitialiss the class GameLogic instance with gui elements, main root,
-            and variables for upgrades, stats, and buttons.
+        """Tnitialise the class GameLogic instance with gui elements, main root.
+
+            And variables for upgrades, stats, and buttons.
 
             Prameters:
-                the gui is the main interface (the main class this one is a support one)
+                the gui is the main interface
+                (the main class this one is a support one)
                 for displaying the game.
                 THe root (tk.Tk) basically the root of tkinter for the game.
         """
-        self.gui = gui 
+        self.gui = gui
         self.root = root
-        self.toast = None # Initialise toast variable as none to store
-        self.money = 0 # Got some inital values for my variables
+        self.toast = None  # Initialise toast variable as none to store
+        self.money = 0  # Got some inital values for my variables
 
         self.ores = 0
         self.baseMiningSpeed = 5
@@ -37,7 +37,7 @@ class GameLogic:
         self.baseMakeSpeed = 5
         self.baseProductGain = 1
         self.productValue = 5
-        self.productValueMulti = 1 
+        self.productValueMulti = 1
 
         self.sellProduct1Requirement = 1
         self.sellProductSpeed = 5
@@ -49,11 +49,12 @@ class GameLogic:
         self.combineProductSpeed = 10
 
     def show_toast(self, message, duration=1000):
-        """Shows a small popup notif thing on screen
+        """Show a small popup notif thing on screen.
 
         Pops up a lil message in the corner of the game window. Mainly used
-        to show stuff like "+1 Ore" or whatever the user just did. Only shows 
-        one at a time, so if there's already one showing, it gets removed first.
+        to show stuff like "+1 Ore" or whatever the user just did.
+        Only shows one at a time, so if there's already one showing,
+        it gets removed first.
 
         Args:
             message (str): What the popup should say
@@ -74,7 +75,8 @@ class GameLogic:
         toast.configure(bg="#1e1e2f")  # dark bg
         toast.attributes("-topmost", True)  # stay above other windows
 
-        toast.update_idletasks()  # make sure sizes are updated before placing it
+        toast.update_idletasks()
+        # make sure sizes are updated before placing it
 
         # try to stick it near the bottom right
         x = self.root.winfo_x() + self.root.winfo_width() - 300
@@ -95,9 +97,8 @@ class GameLogic:
         toast.deiconify()  # finally show it
         toast.after(duration, toast.destroy)  # make it disappear later
 
-
     def validate(self, current, required):
-        """checks if u got enough of a thing to do it
+        """Check if u got enough of a thing to do it.
 
         Args:
             current - how much u have currently
@@ -111,27 +112,36 @@ class GameLogic:
         else:  # not enough bro
             return False
 
-
     def update_gui(self):
-        """Makes sure all labels are updated with
-           right values.
-        """
-        self.gui.ore_label.config(text = f'Ores: {self.ores}')
-        self.gui.product_label.config(text = f'Product Made: {self.product1}')
-        self.gui.money_label.config(text = f'Money: ${self.money}')
-        self.gui.ore_gain_label.config(text = f'Ore Gain: {self.baseOreGain}')
-        self.gui.product_value_label.config(text = f'Product Value: ${float(self.product1*(self.productValue*self.productValueMulti))}')
-        self.gui.product_value_multi_label.config(text = f'Multiplier: {float(self.productValueMulti)}') 
+        """Make sure all labels are updated with right values."""
+        self.gui.ore_label.config(text=f'Ores: {self.ores}')
 
-        self.gui.ore_upgrade.config(text = f'(${self.upgradeOreRequirement}) Upgrade Ores')
-        self.gui.product_upgrade.config(text = f'(${self.upgradeProductValueRequirement}) Upgrade Produce Value')
+        self.gui.product_label.config(text=f'Product Made: {self.product1}')
 
+        self.gui.money_label.config(text=f'Money: ${self.money}')
+
+        self.gui.ore_gain_label.config(text=f'Ore Gain: {self.baseOreGain}')
+
+        self.gui.product_value_label.config(text=
+        'Product Value:'
+        f'${float(self.product1*(self.productValue*self.productValueMulti))}')
+
+        self.gui.product_value_multi_label.config(text=
+        f'Multiplier: {float(self.productValueMulti)}') 
+
+        self.gui.ore_upgrade.config(text=
+        f'(${self.upgradeOreRequirement}) Upgrade Ores')
+
+        self.gui.product_upgrade.config(text=
+        f'(${self.upgradeProductValueRequirement}) Upgrade Produce Value')
 
     def start_timer(self, timer, label):
-        """starts a countdown and updates the label every sec
+        """Start a countdown and updates the label every sec.
 
-        like a basic timer thing, counts down from 'timer' to 0
+
+        Like a basic timer thing, counts down from 'timer' to 0
         """
+
 
         # go from timer down to 0
         for i in range(timer, -1, -1):
@@ -145,7 +155,7 @@ class GameLogic:
             time.sleep(1)
 
     def start(self, btn, speed, label, after_func=None):
-        """start the button action, runs timer and updates labels.
+        """Start the button action, runs timer and updates labels.
 
         This one disables the button, runs a countdown timer,
         updates the UI, and then re-enables the button when done.
@@ -177,19 +187,18 @@ class GameLogic:
         # in the background was the workaround
         threading.Thread(target=run).start()
 
-
     def mine_ores(self):
         """Mine ores, updates the UI and shows a little notification.
 
         This starts the mining action, disables the button while its running,
-        then after the timer is done, adds ores to the stock, shows a toast 
+        then after the timer is done, adds ores to the stock, shows a toast
         with the ore gained, and updates the game interface.
         """
         btn = self.gui.mine_button
         label = self.gui.mine_wait
         speed = self.baseMiningSpeed
 
-        def finishedMining():
+        def finished_mining():
             # adds ores to the stock after mining is finished
             self.ores += self.baseOreGain
             # show the little popup message
@@ -198,48 +207,52 @@ class GameLogic:
             self.update_gui()
 
         # call the start function to handle the timer and actions
-        self.start(btn, speed, label, after_func=finishedMining)
+        self.start(btn, speed, label, after_func=finished_mining)
 
     def make_product(self):
         """Try to make a product if you got enough ores, and updates the stats.
 
-        First, checks if you have enough ores to make a product, if so, it starts
-        the making process, then updates your inventory and shows a notification.
+        First, checks if you have enough ores to make a product,
+        if so, it starts the making process,
+        then updates your inventory and shows a notification.
         Otherwise, it'll show how many ores you still need to continue.
         """
         okay = self.validate(self.ores, self.product1Requirement)
         missing = self.product1Requirement - self.ores
-        def finishedProduct():
+
+        def finished_product():
             self.product1 += self.baseProductGain
             self.show_toast(f"+ {self.baseProductGain} product")
             self.update_gui()
-        if okay == True:  # if we have enough ores, proceed
+        if okay is True:  # if we have enough ores, proceed
             btn = self.gui.make_button
             speed = self.baseMakeSpeed
             label = self.gui.make_wait
-            self.start(btn,speed,label, after_func=finishedProduct)
+            self.start(btn, speed, label, after_func=finished_product)
             self.ores -= self.product1Requirement  # subtract the ores used
             self.update_gui()
         else:
             # show a message how many ores you stil need
             self.show_toast(f"Need {missing} ores to make a product!")
 
-
     def sell_product(self):
-        """Sell product if there's enough, increases money, and updates stats."""
-        okay = self.validate(self.product1, self.sellProduct1Requirement)
+        """Sell product if there's enough.
+        Increases money, and updates stats."""
+        okay = self.validate(self.product1,
+                             self.sellProduct1Requirement)
         selling = self.product1 * self.sellProduct1Requirement
         increase = selling * (self.productValue * self.productValueMulti)
-        def finishedSelling():
+
+        def finished_selling():
             self.money += increase
             self.productValue = 5 * self.productValueMulti
             self.show_toast(f"+ ${increase}")
             self.update_gui()
-        if okay == True:  # we got enough product
+        if okay is True:  # we got enough product
             btn = self.gui.sell_button
             speed = self.sellProductSpeed
             label = self.gui.sell_wait
-            self.start(btn, speed, label, after_func=finishedSelling)
+            self.start(btn, speed, label, after_func=finished_selling)
             self.product1 -= selling  # take the products away after selling
             self.update_gui()
         else:
@@ -249,7 +262,7 @@ class GameLogic:
         """Upgrade ore gain if you have enough money."""
         okay = self.validate(self.money, self.upgradeOreRequirement)
         buying = self.upgradeOreRequirement - self.money
-        if okay == True:  # check if we can afford the upgrade
+        if okay is True:  # check if we can afford the upgrade
             self.money -= self.upgradeOreRequirement
             self.baseOreGain += 1
             self.upgradeOreRequirement += 10  # price increases after each upgrade
@@ -263,7 +276,7 @@ class GameLogic:
         """Upgrade product value if you have enough money."""
         okay = self.validate(self.money, self.upgradeProductValueRequirement)
         buying = self.upgradeProductValueRequirement - self.money
-        if okay == True:
+        if okay is True:
             self.money -= self.upgradeProductValueRequirement
             self.productValueMulti += 0.5
             self.upgradeProductValueRequirement += 20  # cost goes up each time
@@ -282,7 +295,7 @@ class GameLogic:
             self.show_toast("Product Value + 20")
             self.update_gui()
 
-        if okay == True:
+        if okay is True:
             btn = self.gui.combine_button
             speed = self.combineProductSpeed
             label = self.gui.combine_buttonLabel
@@ -523,11 +536,13 @@ class GameGUI:
     def ask_name(self):
         """Ask the user for their name and check it's valid."""
         while True:
-            name = simpledialog.askstring("Enter name", "Please enter your name (max 10 letters):")
+            name = simpledialog.askstring("Enter name",
+                                          "Please enter your name (max 10 letters):")
 
             # If user clicks Cancel or closes the dialog
             if name is None:
-                messagebox.showinfo("Exit", "Name is required to play. Exiting game.")
+                messagebox.showinfo("Exit",
+                                    "Name is required to play. Exiting game.")
                 self.root.destroy()
                 sys.exit()
 
@@ -540,12 +555,14 @@ class GameGUI:
 
             # Name too short or too long
             if len(name) < 3 or len(name) > 10:
-                messagebox.showerror("Invalid Name", "Name has to be 10 characters or less.")
+                messagebox.showerror("Invalid Name",
+                                     "Name has to be less than 10 or more than 3 characters.")
                 continue
 
             # Name has stuff that ain't letters
             if not name.isalpha():
-                messagebox.showerror("Invalid Name", "Name should have only letters (no numbers or symbols).")
+                messagebox.showerror("Invalid Name",
+                                     "Name should have only letters (no numbers or symbols).")
                 continue
 
             # If all good
@@ -554,28 +571,40 @@ class GameGUI:
 
 
 class GuiController:
-    def __init__(self,gui,logic):
+    """Connect the gui buttons to the actual game logic functions."""
+
+    def __init__(self, gui, logic):
+        """Set up the controller with gui + logic references."""
         self.gui = gui
         self.logic = logic
 
-    def handleMining(self):
+    def handle_mining(self):
+        """When the mine button is pressed."""
         self.logic.mine_ores()
-    
-    def handleProduct(self):
+
+    def handle_product(self):
+        """When the make product button is pressed."""
         self.logic.make_product()
 
-    def handleSelling(self):
+    def handle_selling(self):
+        """When the sell button is pressed."""
         self.logic.sell_product()
 
     def handleore_upgrade(self):
+        """When the ore upgrade button is pressed."""
         self.logic.upgrade_ores()
-    
-    def handleCombination(self):
+
+    def handle_combination(self):
+        """When the combine button is pressed."""
         self.logic.combine_product()
-    
-    def handleProductValueUpgrade(self):
+
+    def handle_value_upgrade(self):
+        """When the product value upgrade button is pressed."""
         self.logic.upgrade_product_value()
-        
+
+
+# this is the starting point of the game, runs if file is run directly
+# sets up tkinter window, hooks up gui, logic, and controller stuff
 
 if __name__ == "__main__":
     root = tk.Tk()
@@ -583,17 +612,21 @@ if __name__ == "__main__":
     root.title("Idle Game")
 
     gui = GameGUI(root)
-    logic = GameLogic(gui,root)
+    logic = GameLogic(gui, root)
     controller = GuiController(gui, logic)
 
+    # put player's name in the top label
     gui.name.config(text=f'{gui.user_name}: The Epic Miner')
 
-    gui.mine_button.config(command=controller.handleMining) 
-    gui.make_button.config(command=controller.handleProduct)
-    gui.sell_button.config(command=controller.handleSelling)
+    # hook up all the buttons to the controller methods
+    gui.mine_button.config(command=controller.handle_mining)
+    gui.make_button.config(command=controller.handle_product)
+    gui.sell_button.config(command=controller.handle_selling)
     gui.ore_upgrade.config(command=controller.handleore_upgrade)
-    gui.combine_button.config(command=controller.handleCombination)
-    gui.product_upgrade.config(command=controller.handleProductValueUpgrade)
+    gui.combine_button.config(command=controller.handle_combination)
+    gui.product_upgrade.config(command=controller.handle_value_upgrade)
 
+    # start the game loop
     root.mainloop()
+
 
